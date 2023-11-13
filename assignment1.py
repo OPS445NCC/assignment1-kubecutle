@@ -29,21 +29,6 @@ def day_of_week(date: str) -> str:
 
 def leap_year(year: int) -> bool:
     "return true if the year is a leap year"
-    ...
-
-def mon_max(month:int, year:int) -> int:
-    "returns the maximum day for a given month. Includes leap year check"
-    ...
-
-def after(date: str) -> str: 
-    '''
-    after() -> date for next day in DD/MM/YYYY string format
-
-    Return the date for the next day of the given date in DD/MM/YYYY format.
-    This function has been tested to work for year after 1582
-    '''
-    day, mon, year = (int(x) for x in date.split('/'))
-    day += 1  # next day
 
     lyear = year % 4
     if lyear == 0:
@@ -57,16 +42,47 @@ def after(date: str) -> str:
 
     lyear = year % 400
     if lyear == 0:
-        leap_flag = True  # this is a leap year
-    
+        leap_flag = True  # this is a leap yea
+    return leap_flag
+
+def day_count(year_start:str, year_end:str, day:str) -> int:
+  
+   count=0
+   today=year_start
+   while today != year_end:
+       if day_of_week(today).lower() == day.lower():
+          count=count+1
+       today=after(today)
+   return count
+
+
+   return count
+
+def mon_max(mon:int, year:int) -> int:
+    "returns the maximum day for a given month. Includes leap year check"
     mon_dict= {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
            7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
+    leap_flag=leap_year(year)
     if mon == 2 and leap_flag:
         mon_max = 29
     else:
         mon_max = mon_dict[mon]
-    
-    if day > mon_max:
+    return mon_max
+
+def after(date: str) -> str: 
+    '''
+    after() -> date for next day in DD/MM/YYYY string format
+
+    Return the date for the next day of the given date in DD/MM/YYYY format.
+    This function has been tested to work for year after 1582
+    '''
+    day, mon, year = (int(x) for x in date.split('/'))
+    day += 1  # next day
+
+    leap_flag=leap_year(year)
+    max=mon_max(mon,year)
+ 
+    if day > max:
         mon += 1
         if mon > 12:
             year += 1
@@ -80,18 +96,45 @@ def before(date: str) -> str:
 
 def usage():
     "Print a usage message to the user"
-    print("Usage: " + str(sys.argv[0]) + " DD/MM/YYYY NN")
+    print("Usage: " + str(sys.argv[0]) + " DD/MM/YYYY   DD/MM/YYYY NN   Day")
     sys.exit()
 
 def valid_date(date: str) -> bool:
     "check validity of date"
-    ...
+    parts=date.split('/')
+    if len(parts) != 3:
+         return False
+    
+    day=int(parts[0])
+    if day<1 or day > 31:
+        return False
+    month=int(parts[1])
+    if month<1 or month > 12:
+        return False
+    year=int(parts[2])
+    if year<1000 or year > 2100:
+        return False
+
+    max=mon_max(month,year)
+    if max < day:
+        return False
+    return True
+
 
 def day_iter(start_date: str, num: int) -> str:
     "iterates from start date by num to return end date in DD/MM/YYYY"
     ...
 
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        usage()
+        exit(0)
+    valid = valid_date(sys.argv[1])
+    if not valid :
+        usage()
+    valid = valid_date(sys.argv[2])
+    if not valid :
+        usage()
     # check length of arguments
     # check first arg is a valid date
     # check that second arg is a valid number (+/-)
