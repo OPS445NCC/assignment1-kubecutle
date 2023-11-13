@@ -108,7 +108,7 @@ def is_date_after(first_date_str, second_date_str):
 
 def usage():
     "Print a usage message to the user"
-    print("Usage: " + str(sys.argv[0]) + " DD/MM/YYYY   DD/MM/YYYY NN   Day")
+    print("Usage: " + str(sys.argv[0]) + " DD/MM/YYYY DD/MM/YYYY Day")
     sys.exit()
 
 def valid_date(date: str) -> bool:
@@ -138,7 +138,7 @@ def day_iter(start_date: str, num: int) -> str:
     ...
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         usage()
        
     valid = valid_date(sys.argv[1])
@@ -147,10 +147,9 @@ if __name__ == "__main__":
     valid = valid_date(sys.argv[2])
     if not valid :
         usage()
-    print()
     is_after=is_date_after(sys.argv[1],sys.argv[2])
     if is_after:
-        usage()
+        print("The end date is "+sys.argv[2]+"\nFix your output and try again.")
 
     # check length of arguments
     # check first arg is a valid date

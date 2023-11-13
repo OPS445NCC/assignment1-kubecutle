@@ -187,6 +187,64 @@ class TestMonMax(unittest.TestCase):
             self.assertEqual(self.a1.mon_max(2, i), e, error_msg)
 
 
+class TestDayCount(unittest.TestCase):
+
+    def setUp(self):
+        self.filename = 'assignment1.py'
+        self.pypath = sys.executable
+        error_output = f'{self.filename} cannot be found (HINT: make sure this script AND your file are in the same directory)'
+        file = os.path.join(os.getcwd(), self.filename)
+        self.assertTrue(os.path.exists(file), msg=error_output)
+        try:
+            self.a1 = import_module(self.filename.split('.')[0])
+        except ModuleNotFoundError:
+            print("Cannot find a function inside your assignment1.py. Do not rename or delete any of the required functions.")
+
+    def test_day_count(self):
+        "test the day_count function"
+        test_dat = [
+            {
+                'start': '15/06/2023',
+                'end': '13/09/2024',
+                'day': 'mon',
+                'expected': 65
+            },
+            {
+                'start': '11/01/2020',
+                'end': '11/04/2023',
+                'day': 'sat',
+                'expected': 170
+            },
+            {
+                'start': '31/12/2020',
+                'end': '30/09/2021',
+                'day': 'thu',
+                'expected': 39
+            },
+            {
+                'start': '01/12/2001',
+                'end': '01/12/2002',
+                'day': 'mon',
+                'expected': 52
+            },
+            {
+                'start': '01/01/2000',
+                'end': '01/01/2001',
+                'day': 'wed',
+                'expected': 52
+            },
+            {
+                'start': '12/12/2012',
+                'end': '12/11/2019',
+                'day': 'fri',
+                'expected': 361
+            }
+
+        ]
+        error_msg = 'day_count() not returning correct number of days'
+        for i in test_dat:
+            self.assertEqual(self.a1.day_count(i['start'], i['end'], i['day']), i['expected'], error_msg)
+
 class TestLeap(unittest.TestCase):
 
     def setUp(self):
@@ -342,12 +400,12 @@ class TestFinal(unittest.TestCase):
             dobj1 = datetime.strptime(date1, '%d/%m/%Y')
             num = randint(0, 500)
             eobj = dobj1 + timedelta(num)
-            e = eobj.strftime('%a, %d/%m/%Y')
+            e = eobj.strftime('%d/%m/%Y')
             error_msg = (f'Running your script with arguments\n'
-                         f'"{date1} {num}" should return the output:'
+                         f'"{date1} {e} Wed" should return the output:'
                          f'"The end date is {e}."\n'
                          f'Fix your output and try again.\n')
-            input = [date1, str(num)]
+            input = [date1, e, 'Wed']
             cmd = [self.pypath, self.filename] + input
             p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             output, error = p.communicate(timeout=10)
@@ -360,12 +418,12 @@ class TestFinal(unittest.TestCase):
             dobj1 = datetime.strptime(date1, '%d/%m/%Y')
             num = randint(-500, -1)
             eobj = dobj1 + timedelta(num)
-            e = eobj.strftime('%a, %d/%m/%Y')
+            e = eobj.strftime('%d/%m/%Y')
             error_msg = (f'Running your script with arguments\n'
-                         f'"{date1} {num}" should return the output:'
+                         f'"{date1} {e} Wed" should return the output:'
                          f'"The end date is {e}."\n'
                          f'Fix your output and try again.\n')
-            input = [date1, str(num)]
+            input = [date1, e, 'Wed']
             cmd = [self.pypath, self.filename] + input
             p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             output, error = p.communicate(timeout=10)
