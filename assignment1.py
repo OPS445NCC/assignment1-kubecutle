@@ -45,11 +45,11 @@ def leap_year(year: int) -> bool:
         leap_flag = True  # this is a leap yea
     return leap_flag
 
-def day_count(year_start:str, year_end:str, day:str) -> int:
+def day_count(date_start:str, date_end:str, day:str) -> int:
   
    count=0
-   today=year_start
-   while today != year_end:
+   today=date_start
+   while today != date_end:
        if day_of_week(today).lower() == day.lower():
           count=count+1
        today=after(today)
@@ -94,6 +94,18 @@ def before(date: str) -> str:
     "Returns previous day's date as DD/MM/YYYY"
     ...
 
+def is_date_after(first_date_str, second_date_str):
+  
+    first_date_parts = list(map(int, first_date_str.split('/')))
+    second_date_parts = list(map(int, second_date_str.split('/')))
+
+    first_date_reorder = first_date_parts[2], first_date_parts[1], first_date_parts[0]
+    second_date_reorder = second_date_parts[2], second_date_parts[1], second_date_parts[0]
+
+    # Compare the dates
+    return first_date_reorder > second_date_reorder
+
+
 def usage():
     "Print a usage message to the user"
     print("Usage: " + str(sys.argv[0]) + " DD/MM/YYYY   DD/MM/YYYY NN   Day")
@@ -128,13 +140,18 @@ def day_iter(start_date: str, num: int) -> str:
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         usage()
-        exit(0)
+       
     valid = valid_date(sys.argv[1])
     if not valid :
         usage()
     valid = valid_date(sys.argv[2])
     if not valid :
         usage()
+    print()
+    is_after=is_date_after(sys.argv[1],sys.argv[2])
+    if is_after:
+        usage()
+
     # check length of arguments
     # check first arg is a valid date
     # check that second arg is a valid number (+/-)
