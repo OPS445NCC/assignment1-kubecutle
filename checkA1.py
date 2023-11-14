@@ -206,37 +206,37 @@ class TestDayCount(unittest.TestCase):
             {
                 'start': '15/06/2023',
                 'end': '13/09/2024',
-                'day': 'mon',
+                'day': 'Mon',
                 'expected': 65
             },
             {
                 'start': '11/01/2020',
                 'end': '11/04/2023',
-                'day': 'sat',
+                'day': 'Sat',
                 'expected': 170
             },
             {
                 'start': '31/12/2020',
                 'end': '30/09/2021',
-                'day': 'thu',
+                'day': 'Thu',
                 'expected': 39
             },
             {
                 'start': '01/12/2001',
                 'end': '01/12/2002',
-                'day': 'mon',
+                'day': 'Mon',
                 'expected': 52
             },
             {
                 'start': '01/01/2000',
                 'end': '01/01/2001',
-                'day': 'wed',
+                'day': 'Wed',
                 'expected': 52
             },
             {
                 'start': '12/12/2012',
                 'end': '12/11/2019',
-                'day': 'fri',
+                'day': 'Fri',
                 'expected': 361
             }
 
