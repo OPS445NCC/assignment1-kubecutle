@@ -206,37 +206,37 @@ class TestDayCount(unittest.TestCase):
             {
                 'start': '15/06/2023',
                 'end': '13/09/2024',
-                'day': 'mon',
+                'day': 'Mon',
                 'expected': 65
             },
             {
                 'start': '11/01/2020',
                 'end': '11/04/2023',
-                'day': 'sat',
+                'day': 'Sat',
                 'expected': 170
             },
             {
                 'start': '31/12/2020',
                 'end': '30/09/2021',
-                'day': 'thu',
+                'day': 'Thu',
                 'expected': 39
             },
             {
                 'start': '01/12/2001',
                 'end': '01/12/2002',
-                'day': 'mon',
+                'day': 'Mon',
                 'expected': 52
             },
             {
                 'start': '01/01/2000',
                 'end': '01/01/2001',
-                'day': 'wed',
+                'day': 'Wed',
                 'expected': 52
             },
             {
                 'start': '12/12/2012',
                 'end': '12/11/2019',
-                'day': 'fri',
+                'day': 'Fri',
                 'expected': 361
             }
 
@@ -391,43 +391,8 @@ class TestFinal(unittest.TestCase):
             except ValueError:
                 pass
         return f'{d:02}/{m:02}/{y}'
-    
 
-    def test_pos_arg(self):
-        "script returns expected output with positive number"
-        for _ in range(1, 3):
-            date1 = self.rando_date_str()
-            dobj1 = datetime.strptime(date1, '%d/%m/%Y')
-            num = randint(0, 500)
-            eobj = dobj1 + timedelta(num)
-            e = eobj.strftime('%d/%m/%Y')
-            error_msg = (f'Running your script with arguments\n'
-                         f'"{date1} {e} Wed" should return the output:'
-                         f'"The end date is {e}."\n'
-                         f'Fix your output and try again.\n')
-            input = [date1, e, 'Wed']
-            cmd = [self.pypath, self.filename] + input
-            p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
-            output, error = p.communicate(timeout=10)
-            self.assertIn(e, output.decode('utf-8'), error_msg)
-
-    def test_neg_arg(self):
-        "script returns expected output with negative number"
-        for _ in range(1, 3):
-            date1 = self.rando_date_str()
-            dobj1 = datetime.strptime(date1, '%d/%m/%Y')
-            num = randint(-500, -1)
-            eobj = dobj1 + timedelta(num)
-            e = eobj.strftime('%d/%m/%Y')
-            error_msg = (f'Running your script with arguments\n'
-                         f'"{date1} {e} Wed" should return the output:'
-                         f'"The end date is {e}."\n'
-                         f'Fix your output and try again.\n')
-            input = [date1, e, 'Wed']
-            cmd = [self.pypath, self.filename] + input
-            p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
-            output, error = p.communicate(timeout=10)
-            self.assertIn(e, output.decode('utf-8'), error_msg)
+  
     
     def test_invalid_date(self):
         "output contains usage when bad date"
@@ -447,6 +412,82 @@ class TestFinal(unittest.TestCase):
             p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             output, error = p.communicate(timeout=10)
             self.assertRegex(output.decode('utf-8'), e, error_msg)
+    
+
+    def test_invalid_and_valid_date(self):
+        "output contains usage when bad date"
+
+        invalid_test_dat = [
+            {
+                "start": '01/25/2022',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            },
+            {
+                "start": '20-03-13',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            },
+            {
+                "start": '01/20/2001',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            },
+            {
+                "start": '00/11/1539',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            },
+            {
+                "start": '29/02/2021',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            },
+            {
+                "start": '31/04/2023',
+                "end": '01/01/2023',
+                "day": 'Mon'
+            }
+        ]
+        
+        valid_test_dat = [
+            {
+                'start': '01/12/2001',
+                'end': '01/12/2002',
+                'day': 'Mon',
+                'expected': 52
+            },
+            {
+                'start': '01/01/2000',
+                'end': '01/01/2001',
+                'day': 'Wed',
+                'expected': 52
+            },
+            {
+                'start': '12/12/2012',
+                'end': '12/11/2019',
+                'day': 'Fri',
+                'expected': 361
+            }
+        ]
+
+        error_msg = "Error: Entering an invalid date should call the usage function, return a usage message, and exit."
+        e = r'(?i)Usage.*'  # ignore case
+        for datestr in invalid_test_dat:
+            input = [datestr["start"], datestr["end"], datestr["day"]]
+            cmd = [self.pypath, self.filename] + input
+            p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+            output, error = p.communicate(timeout=10)
+            self.assertRegex(output.decode('utf-8'), e, error_msg)
+
+        for datestr in valid_test_dat:
+            input = [datestr["start"], datestr["end"], datestr["day"]]
+            cmd = [self.pypath, self.filename] + input
+            p = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+            output, error = p.communicate(timeout=10)
+            self.assertNotRegex(output.decode('utf-8'), e, error_msg)
+            self.assertRegex(output.decode('utf-8'), r'.*'+str(datestr["expected"])+' ' +datestr["day"]+'\.$',error_msg)
+
 
     def test_invalid_num(self):
         "output contains usage when bad number" 
@@ -470,5 +511,4 @@ class TestFinal(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(buffer=True)  # buffer line suppresses a1 printlines from check script output.
-
 
